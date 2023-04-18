@@ -1,0 +1,47 @@
+name: Rails CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.0
+
+    - name: Install dependencies
+      run: |
+        gem install bundler
+        bundle install --jobs 4 --retry 3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 16
+
+    - name: Install yarn dependencies
+      run: yarn install --frozen-lockfile
+
+    - name: Set up MySQL
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y mysql-server
+        sudo service mysql start
+
+    - name: Create and migrate database
+      run: |
+        bundle exec rake db:create
+        bundle exec rake db:migrate
+
+    - name: Run tests
+      run: |
+        bundle exec rspec
