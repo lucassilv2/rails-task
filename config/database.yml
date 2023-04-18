@@ -10,9 +10,9 @@ default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
   database: task_db
-  username: lucas2
-  password: 123
-  host: localhost
+  username: root
+  password: root
+  host: 127.0.0.1
 
 development:
   <<: *default
